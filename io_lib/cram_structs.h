@@ -839,6 +839,7 @@ typedef struct {
     int lossy_read_names;
     int preserve_aux_order;             // if set implies emitting RG, MD and NM
     int preserve_aux_size;              // does not replace 'i' with 'c' etc in aux.
+    int discard_aux;                    // if set, discard all aux tags
 } cram_fd;
 
 #if defined(CRAM_IO_CUSTOM_BUFFERING)
@@ -963,6 +964,7 @@ enum cram_option {
     CRAM_OPT_LOSSY_READ_NAMES,
     CRAM_OPT_PRESERVE_AUX_ORDER,
     CRAM_OPT_PRESERVE_AUX_SIZE,
+    CRAM_OPT_DISCARD_AUX,
     CRAM_OPT_WITH_BGZIP_INDEX,
     CRAM_OPT_OUTPUT_BGZIP_IDX
 };

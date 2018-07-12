@@ -122,6 +122,7 @@ static void usage(FILE *fp) {
     fprintf(fp, "    -n             [Cram] Discard read names where possible.\n");
     fprintf(fp, "    -P             Preserve all aux tags (incl RG,NM,MD)\n");
     fprintf(fp, "    -p             Preserve aux tag sizes ('i', 's', 'c')\n");
+    fprintf(fp, "    -D             Discard all aux tags\n");
     fprintf(fp, "    -q             Don't add scramble @PG header line\n");
     fprintf(fp, "    -N integer     Stop decoding after 'integer' sequences\n");
     fprintf(fp, "    -t N           Use N threads (availability varies by format)\n");
@@ -153,13 +154,14 @@ int main(int argc, char **argv) {
     int bases_per_slice = 0;
     int lossy_read_names = 0;
     int preserve_aux_order = 0;
-    int preserve_aux_size = 0; 
-    int add_pg = 1;   
+    int preserve_aux_size = 0;
+    int discard_aux = 0;
+    int add_pg = 1;
 
     scram_init();
 
     /* Parse command line arguments */
-    while ((c = getopt(argc, argv, "u0123456789hvs:S:V:r:xXeI:O:R:!MmjJZt:BN:F:Hb:nPpqg:G:")) != -1) {
+    while ((c = getopt(argc, argv, "u0123456789hvsD:S:V:r:xXeI:O:R:!MmjJZt:BN:F:Hb:nPpqg:G:")) != -1) {
 	switch (c) {
 	case 'F':
 	    sam_fields = strtol(optarg, NULL, 0); // undocumented for testing
@@ -303,8 +305,12 @@ int main(int argc, char **argv) {
 	    break;
 
 	case 'p':
-	    preserve_aux_size = 1;
-	    break;
+        preserve_aux_size = 1;
+        break;
+
+    case 'D':
+        discard_aux = 1;
+        break;
 
 	case 'q':
 	    add_pg = 0;
@@ -486,8 +492,14 @@ int main(int argc, char **argv) {
 	    return 1;
 
     if (preserve_aux_size)
-	if (scram_set_option(out, CRAM_OPT_PRESERVE_AUX_SIZE, preserve_aux_size))
-	    return 1;
+    if (scram_set_option(out, CRAM_OPT_PRESERVE_AUX_SIZE, preserve_aux_size))
+        return 1;
+
+    if (discard_aux
+        && scram_set_option(out, CRAM_OPT_DISCARD_AUX, discard_aux))
+    {
+        return 1;
+    }
 
     if (sam_fields)
 	scram_set_option(in, CRAM_OPT_REQUIRED_FIELDS, sam_fields);

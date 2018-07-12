@@ -5549,8 +5549,12 @@ int cram_set_voption(cram_fd *fd, enum cram_option opt, va_list args) {
 	break;
 
     case CRAM_OPT_PRESERVE_AUX_SIZE:
-	fd->preserve_aux_size = va_arg(args, int);
-	break;
+    fd->preserve_aux_size = va_arg(args, int);
+    break;
+
+    case CRAM_OPT_DISCARD_AUX:
+        fd->discard_aux = va_arg(args, int);
+        break;
 
     default:
 	fprintf(stderr, "Unknown CRAM option code %d\n", opt);

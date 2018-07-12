@@ -2458,7 +2458,14 @@ static int process_one_read(cram_fd *fd, cram_container *c,
     //cr->mate_flags;   // MF
     //cr->ntags;        // TC
     cr->ntags      = 0; //cram_stats_add(c->stats[DS_TC], cr->ntags);
-    rg = cram_encode_aux(fd, b, c, s, cr);
+    if (!fd->discard_aux)
+    {
+        rg = cram_encode_aux(fd, b, c, s, cr);
+    }
+    else
+    {
+        rg = NULL;
+    }
 
     //cr->aux_size = b->blk_size - ((char *)bam_aux(b) - (char *)&bam_ref(b));
     //cr->aux = DSTRING_LEN(s->aux_ds);
